@@ -28,8 +28,8 @@ def conver_to_excel(tdms_file_path: str, output_path: str):
             if len(data) > 0:
                 if excel_data is None:
                     excel_data = pd.DataFrame(data, columns=[f'{group_name}-{channel_name}'])
-                else:
-                    excel_data[f'{group_name}-{channel_name}'] = data
+                #else:
+                #   excel_data[f'{group_name}-{channel_name}'] = data
         if not os.path.exists(output_path[:output_path.rfind('/')]):
             os.makedirs(output_path[:output_path.rfind('/')])
         excel_data.to_excel(output_path, index=None)
@@ -39,17 +39,11 @@ def cover_dir_to_excel(dir_path: str, output_dir_path:str):
     for file_name in os.listdir(dir_path):
         if file_name.endswith('.tdms'):
             tdms_path = os.path.join(dir_path + '/' + file_name)
-            output_path = output_dir_path + '/' + file_name.replace('tdms', 'xlsx')
+            output_path = output_dir_path + '/' + file_name.replace('.tdms', '.xlsx')
             conver_to_excel(tdms_path, output_path)
             print(f'{file_name} 转换完成')
 
-output_path = source_dir + '/output'
 
-if not os.path.exists(output_path):
-    os.makedirs(output_path)
-else:
-    shutil.rmtree(output_path)
-    os.makedirs(output_path)
     
 def dfs(search_path: str):
     cover_dir_to_excel(search_path, output_path + search_path.replace(source_dir, ''))
@@ -58,8 +52,20 @@ def dfs(search_path: str):
         if os.path.isdir(file_path):
             if file_name[0] != '.':
                 dfs(file_path)
-
-dfs(source_dir)        
+             
+if __name__ == '__main__':
+    if os.path.isdir(source_dir):
+        output_path = source_dir + '/output'
+        
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+        else:
+            shutil.rmtree(output_path)
+            os.makedirs(output_path)
+            
+        dfs(source_dir)
+    else:
+        conver_to_excel(source_dir, source_dir.replace('.tdms', '.xlsx'))
             
 
 
